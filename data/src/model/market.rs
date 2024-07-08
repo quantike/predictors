@@ -1,4 +1,6 @@
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
+
+use super::event::Event;
 
 
 /// Identifies the type of market, which affects its payout structure.
@@ -35,7 +37,48 @@ impl Display for MarketType {
 
 /// Identifies the most basic information about a market.
 pub struct Market<'a> {
-    ticker: String,
-    market_type: MarketType,
-    event: &a Event,
+    /// Unique identifier for a [`Market`].
+    pub ticker: String,
+
+    /// Identifies the type of [`Market`], which affects its payout and structure. Uses the enum
+    /// [`MarketType`] to designate the intended type.
+    ///
+    /// The two types are [`MarketType::Binary`] or [`MarketType::Scalar`].
+    ///
+    /// TODO: An opportunity for improvement would be to use traits to force impls for new
+    /// [`Market`]s depending on the [`MarketType`]. For example, [`MarketType::Scalar`] would
+    /// affect a some type of [`Market::payout_structure()`] function.
+    pub market_type: MarketType,
+    event: &'a Event<'a>,
+}
+
+impl<'a> Debug for Market<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f, 
+            "{} | type: {}",
+            self.ticker,
+            self.market_type,
+        )
+    }
+}
+
+impl<'a> Display for Market<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.ticker)
+    }
+}
+
+impl<'a> Market<'a> {
+    pub fn new(ticker: &str, market_type: MarketType, event: &'a Event) -> Self {
+        Market { ticker: ticker.to_string(), market_type, event }
+    }
+
+    pub fn event_exclusivity(&self) -> &bool {
+        &self.event.mutually_exclusive
+    }
+
+    pub fn payout_structure(&self) -> Option<f64> {
+        unimplemented!()
+    }
 }
