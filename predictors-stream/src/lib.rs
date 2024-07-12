@@ -1,4 +1,6 @@
 pub mod model;
+pub mod subscription;
+
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
