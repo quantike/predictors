@@ -3,9 +3,13 @@
 version = 3
 
 [[package]]
-name = "data"
+name = "predictors"
 version = "0.1.0"
 
 [[package]]
-name = "predictors"
+name = "predictors-protocol"
+version = "0.1.0"
+
+[[package]]
+name = "predictors-stream"
 version = "0.1.0"

@@ -1,11 +1,5 @@
-[workspace] 
-members = [
-    "predictors-stream", 
-    "predictors-protocol"
-]
-
 [package]
-name = "predictors"
+name = "predictors-protocol"
 version = "0.1.0"
 edition = "2021"
 
