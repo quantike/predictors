@@ -1,5 +1,5 @@
-use std::fmt::Display;
 use crate::model::series::Series;
+use std::fmt::Display;
 
 /// Holds the most basic information about an [`Event`].
 pub struct Event {
@@ -22,9 +22,9 @@ impl Display for Event {
 impl Event {
     pub fn new(ticker: &str, mutually_exclusive: bool, series: Series) -> Self {
         // possibly as a check to ensure event ticker inherits from series ticker?
-        Event { 
-            ticker: ticker.to_string(), 
-            mutually_exclusive, 
+        Event {
+            ticker: ticker.to_string(),
+            mutually_exclusive,
             series,
         }
     }

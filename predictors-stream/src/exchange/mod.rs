@@ -21,7 +21,7 @@ impl ExchangeId {
     /// Note: This may change.
     pub fn as_str(&self) -> &'static str {
         match self {
-            ExchangeId::Kalshi => "KAL"
+            ExchangeId::Kalshi => "KAL",
         }
     }
 }

@@ -1,11 +1,14 @@
-use std::{borrow::Cow, fmt::{Debug, Display}};
+use std::{
+    borrow::Cow,
+    fmt::{Debug, Display},
+};
 
 use market::Market;
 
 /// [`Market`] related data structures.
 ///
 /// i.e. [`Market`], [`MarketType`]
-/// 
+///
 /// Note: Eventually, we need to create specific data structures and implementations for each
 /// [`MarketType`]; [`MarketType::Binary`] and [`MarketType::Scalar`].
 pub mod market;
@@ -23,17 +26,17 @@ pub mod event;
 /// i.e. [`Series`]
 ///
 /// Note: We might want to explicitly enumerate supported [`Series`] frequencies with an enum (e.g.
-/// "daily", "weekly", etc.). This would require a bit of data mining to figure out. 
+/// "daily", "weekly", etc.). This would require a bit of data mining to figure out.
 pub mod series;
 
 /// Represents a unique combination of an [`Exchange`] and [`Market`], which make up a
-/// [`PredictionMarket`]. 
+/// [`PredictionMarket`].
 pub struct PredictionMarket<MarketId = Market> {
     pub exchange: Exchange,
     pub market: MarketId,
 }
 
-impl <E, M, MarketId> From<(E, M)> for PredictionMarket<MarketId>
+impl<E, M, MarketId> From<(E, M)> for PredictionMarket<MarketId>
 where
     E: Into<Exchange>,
     M: Into<MarketId>,
@@ -44,12 +47,15 @@ where
 }
 
 impl<MarketId> PredictionMarket<MarketId> {
-    pub fn new<E, M>(exchange: E, market: M) -> Self 
-    where 
+    pub fn new<E, M>(exchange: E, market: M) -> Self
+    where
         E: Into<Exchange>,
         M: Into<MarketId>,
     {
-        Self { exchange: exchange.into(),  market: market.into() }    
+        Self {
+            exchange: exchange.into(),
+            market: market.into(),
+        }
     }
 }
 
@@ -74,7 +80,7 @@ impl Display for PredictionMarketId {
 pub struct Exchange(Cow<'static, str>);
 
 impl<E> From<E> for Exchange
-where 
+where
     E: Into<Cow<'static, str>>,
 {
     fn from(exchange: E) -> Self {
@@ -93,4 +99,3 @@ impl Display for Exchange {
         write!(f, "{}", self.0)
     }
 }
-

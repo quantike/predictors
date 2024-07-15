@@ -3,10 +3,9 @@ use std::fmt::Debug;
 /// [`SubChannel::MarketLifecycles`] [`SubscriptionChannel`]s and the associate output data models.
 pub mod lifecycle;
 
-
 /// Defines the type of a [`Subscription`], and the output [`Self::Event`] that it yields.
 pub trait SubscriptionChannel
-where 
+where
     Self: Debug + Clone,
 {
     type Event: Debug;
@@ -27,7 +26,7 @@ pub struct Subscription<Exchange, Market, Channel> {
 /// result in messages of type `snapshot` and `delta`.).
 pub enum SubChannel {
     /// A complete view of the order book's aggregated price levels on a given market and all
-    /// further updates to it. 
+    /// further updates to it.
     OrderbookDeltas,
 
     /// The list price ticker for a given market.
@@ -41,7 +40,7 @@ pub enum SubChannel {
     Tickers,
 
     /// Update the client with the most recent trades that occur in the markets that the client is
-    /// subscribed to. 
+    /// subscribed to.
     ///
     /// The subscription process is similar to [`SubChannel::Tickers`], the client specifies the
     /// markets they are interested in subscribing to and the server with start sending trade data

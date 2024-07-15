@@ -1,5 +1,5 @@
-use std::fmt::Display;
 use super::event::Event;
+use std::fmt::Display;
 
 /// Identifies the most basic information about a market.
 pub struct Market {
@@ -28,7 +28,11 @@ impl Display for Market {
 
 impl Market {
     pub fn new(ticker: &str, market_type: MarketType, event: Event) -> Self {
-        Market { ticker: ticker.to_string(), market_type, event }
+        Market {
+            ticker: ticker.to_string(),
+            market_type,
+            event,
+        }
     }
 
     pub fn event_exclusivity(&self) -> &bool {
@@ -62,8 +66,8 @@ impl Default for MarketType {
 impl Display for MarketType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
-            f, 
-            "{}", 
+            f,
+            "{}",
             match self {
                 MarketType::Binary => "BINARY".to_string(),
                 MarketType::Scalar => "SCALAR".to_string(),
@@ -71,4 +75,3 @@ impl Display for MarketType {
         )
     }
 }
-

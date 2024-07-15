@@ -3,7 +3,7 @@ use std::fmt::Display;
 /// Holds most basic information about a [`Series`].
 pub struct Series {
     /// Ticker that identifies this [`Series`].
-    pub ticker: String, 
+    pub ticker: String,
 
     /// Description of the frequency of the [`Series`]. There is no fixed value set here, but will
     /// be something human-readable like: "weekly", "daily", "one-off".
@@ -12,7 +12,7 @@ pub struct Series {
     /// to instantiate a Series with an unrecognized frequency.
     ///
     /// TODO: This might also be an Option<T> field, with a default.
-     pub frequency: String,
+    pub frequency: String,
 }
 
 impl Display for Series {
