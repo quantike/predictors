@@ -3,6 +3,8 @@ use chrono::{DateTime, Utc};
 use super::SubscriptionChannel;
 
 
+/// [`MarketLifecycles`] track the [`Lifecycle`] of individual markets, digesting the messages
+/// into [`LifecycleUpdate`]s which represent the current [`LifecycleState`].
 #[derive(Clone, Debug)]
 pub struct MarketLifecycles;
 
@@ -38,32 +40,31 @@ pub struct Lifecycle {
 }
 
 impl Lifecycle {
-    pub fn check_state(&self) -> Option<LifecycleUpdate> {
+    /// Checks the state of the [`Lifecycle`] message and curates a [`LifecycleUpdate`] from by
+    /// checking the truthinesss of various fields against the mutually exclusive enum of possible
+    /// [`LifecycleState`]s.
+    pub fn update(&self) -> Option<LifecycleUpdate> {
         let now = Utc::now();
 
         let (state, ts) = match (self.determination_ts, self.settled_ts, self.is_deactivated, now >= self.close_ts) {
-            (None, _, false, _) => (LifecycleState::Opened, self.open_ts),
-            (None, _, true, _) => (LifecycleState::Paused, now),
+            (None, _, false, false) => (LifecycleState::Opened, self.open_ts),
+            (None, _, true, false) => (LifecycleState::Paused, now),
             (None, _, _, true) => (LifecycleState::Closed, self.close_ts),
             (Some(determination_ts), None, _, _) => (LifecycleState::Determined, determination_ts),
-            (Some(determination_ts), Some(settled_ts), _, _) => (LifecycleState::Settled, settled_ts),
-            // (None, _, true, _) => ifecycleState::Paused, now),
-            // (None, _, false, _) => (LifecycleState::Opened, self.open_ts),
-            // (Some(determination_ts), None, _, _) => (LifecycleState::Determined, determination_ts),
-            // (_, Some(settled_ts), _, _) => (LifecycleState::Settled, settled_ts),
-            // (_, _, _, true) => (LifecycleState::Closed, self.close_ts),
-            // (_, _, _, _) => return None,
+            (_, Some(settled_ts), _, _) => (LifecycleState::Settled, settled_ts),
         };
 
         Some(LifecycleUpdate::new(state, ts, now))
     }
 }
 
+/// A [`LifecycleUpdate`] is a struct that holds the current [`LifecycleState`] and it's relevant
+/// timestamps.
 pub struct LifecycleUpdate {
     /// Current, inferred state of the Market.
     pub state: LifecycleState,
 
-    /// The associate timestamp for that state.
+    /// The associated timestamp for that state. From the [`Lifecycle`] message.
     pub status_ts: DateTime<Utc>,
 
     /// The timestamp of the lifecycle update. Usually "now". 
@@ -85,7 +86,7 @@ impl Display for LifecycleUpdate {
 /// When subscribed to the "market_lifecycle" channel there are several types of lifecycle 
 /// updated that can occur to a market. We use [`LifecycleUpdate`] to track and log these
 /// events.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum LifecycleState {
 	/// When a new market is opened. Determined by the presence of a novel "market_ticker" in
 	/// the message.
@@ -120,5 +121,50 @@ impl Display for LifecycleState {
                 Self::Settled => "settled",
             }
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::{TimeZone, Utc};
+
+    #[test]
+    fn test_market_opened() {
+        let lifecycle = Lifecycle {
+            open_ts: Utc.with_ymd_and_hms(2024, 7, 14, 9, 0, 0).unwrap(),
+            close_ts: Utc.with_ymd_and_hms(2024, 7, 15, 9, 0, 0).unwrap(),
+            determination_ts: None,
+            settled_ts: None,
+            result: None,
+            is_deactivated: false,
+        };
+
+        let update = lifecycle.update();
+
+        assert!(update.is_some());
+        let update = update.unwrap();
+        assert_eq!(update.state, LifecycleState::Opened);
+        assert_eq!(update.status_ts, lifecycle.open_ts);
+    }
+    
+    #[test]
+    fn test_market_paused() {
+        unimplemented!()
+    }
+    
+    #[test]
+    fn test_market_closed() {
+        unimplemented!()
+    }
+    
+    #[test]
+    fn test_market_determined() {
+        unimplemented!()
+    }
+    
+    #[test]
+    fn test_market_settled() {
+        unimplemented!()
     }
 }
