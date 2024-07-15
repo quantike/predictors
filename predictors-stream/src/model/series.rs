@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Display;
 
 /// Holds most basic information about a [`Series`].
 pub struct Series {
@@ -15,15 +15,9 @@ pub struct Series {
      pub frequency: String,
 }
 
-impl Debug for Series {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[{}] {}", self.frequency, self.ticker)
-    }
-}
-
 impl Display for Series {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.ticker)
+        write!(f, "{}, {}", self.ticker, self.frequency)
     }
 }
 

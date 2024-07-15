@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Display;
 
 use super::event::Event;
 
@@ -28,8 +28,8 @@ impl Display for MarketType {
             f, 
             "{}", 
             match self {
-                MarketType::Binary => "binary".to_string(),
-                MarketType::Scalar => "scalar".to_string(),
+                MarketType::Binary => "BINARY".to_string(),
+                MarketType::Scalar => "SCALAR".to_string(),
             }
         )
     }
@@ -49,23 +49,14 @@ pub struct Market<'a> {
     /// [`Market`]s depending on the [`MarketType`]. For example, [`MarketType::Scalar`] would
     /// affect a some type of [`Market::payout_structure()`] function.
     pub market_type: MarketType,
-    event: &'a Event<'a>,
-}
 
-impl<'a> Debug for Market<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f, 
-            "{} | type: {}",
-            self.ticker,
-            self.market_type,
-        )
-    }
+    /// Reference to the [`Market`]'s parent [`Event`].
+    event: &'a Event<'a>,
 }
 
 impl<'a> Display for Market<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.ticker)
+        write!(f, "{}, {}", self.ticker, self.market_type)
     }
 }
 

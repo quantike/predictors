@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Display;
 use crate::model::series::Series;
 
 /// Holds the most basic information about an [`Event`].
@@ -17,15 +17,9 @@ pub struct Event<'a> {
     series: &'a Series,
 }
 
-impl<'a> Debug for Event<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} | MECENT: {} ", self.ticker, self.mutually_exclusive)
-    }
-}
-
 impl<'a> Display for Event<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.ticker)
+        write!(f, "{}, {}", self.ticker, self.mutually_exclusive)
     }
 }
 
