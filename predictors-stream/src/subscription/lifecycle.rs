@@ -150,21 +150,80 @@ mod tests {
     
     #[test]
     fn test_market_paused() {
-        unimplemented!()
+        let lifecycle = Lifecycle {
+            open_ts: Utc.with_ymd_and_hms(2024, 7, 14, 9, 0, 0).unwrap(),
+            close_ts: Utc.with_ymd_and_hms(2024, 7, 15, 9, 0, 0).unwrap(),
+            determination_ts: None,
+            settled_ts: None,
+            result: None,
+            is_deactivated: true,
+        };
+
+        let update = lifecycle.update();
+
+        assert!(update.is_some());
+        let update = update.unwrap();
+        assert_eq!(update.state, LifecycleState::Paused);
+        assert!(update.status_ts <= Utc::now());
     }
     
     #[test]
     fn test_market_closed() {
-        unimplemented!()
+        let lifecycle = Lifecycle {
+            open_ts: Utc.with_ymd_and_hms(2024, 7, 12, 9, 0, 0).unwrap(),
+            close_ts: Utc.with_ymd_and_hms(2024, 7, 13, 9, 0, 0).unwrap(), // in the past
+            determination_ts: None,
+            settled_ts: None,
+            result: None,
+            is_deactivated: true,
+        };
+
+        let update = lifecycle.update();
+
+        assert!(update.is_some());
+        let update = update.unwrap();
+        assert_eq!(update.state, LifecycleState::Closed);
+        assert_eq!(update.status_ts, lifecycle.close_ts);
     }
     
     #[test]
     fn test_market_determined() {
-        unimplemented!()
+        let determination_ts = Utc.with_ymd_and_hms(2024, 7, 14, 9, 0, 0);
+        let lifecycle = Lifecycle {
+            open_ts: Utc.with_ymd_and_hms(2024, 7, 13, 9, 0, 0).unwrap(),
+            close_ts: Utc.with_ymd_and_hms(2024, 7, 14, 9, 0, 0).unwrap(),
+            determination_ts: Some(determination_ts.unwrap()),
+            settled_ts: None,
+            result: Some(String::from("YES")),
+            is_deactivated: false,
+        };
+
+        let update = lifecycle.update();
+
+        assert!(update.is_some());
+        let update = update.unwrap();
+        assert_eq!(update.state, LifecycleState::Determined);
+        assert_eq!(update.status_ts, lifecycle.determination_ts.unwrap());
     }
     
     #[test]
     fn test_market_settled() {
-        unimplemented!()
+        let determination_ts = Utc.with_ymd_and_hms(2024, 7, 14, 9, 0, 0);
+        let settled_ts = Utc.with_ymd_and_hms(2024, 7, 15, 9, 0, 0);
+        let lifecycle = Lifecycle {
+            open_ts: Utc.with_ymd_and_hms(2024, 7, 13, 9, 0, 0).unwrap(),
+            close_ts: Utc.with_ymd_and_hms(2024, 7, 14, 9, 0, 0).unwrap(),
+            determination_ts: Some(determination_ts.unwrap()),
+            settled_ts: Some(settled_ts.unwrap()),
+            result: Some(String::from("YES")),
+            is_deactivated: false,
+        };
+
+        let update = lifecycle.update();
+
+        assert!(update.is_some());
+        let update = update.unwrap();
+        assert_eq!(update.state, LifecycleState::Settled);
+        assert_eq!(update.status_ts, lifecycle.settled_ts.unwrap());
     }
 }
