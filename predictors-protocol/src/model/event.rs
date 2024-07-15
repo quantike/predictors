@@ -2,7 +2,7 @@ use std::fmt::Display;
 use crate::model::series::Series;
 
 /// Holds the most basic information about an [`Event`].
-pub struct Event<'a> {
+pub struct Event {
     /// Unique identifier for [`Event`]s.
     pub ticker: String,
 
@@ -10,21 +10,17 @@ pub struct Event<'a> {
     pub mutually_exclusive: bool,
 
     /// The reference to the parent [`Series`] of this [`Event`].
-    ///
-    /// This field holds a reference to the [`Series`] instance that represents the parent-series
-    /// to which this [`Event`] belongs. It allows accessing properties and methods of the
-    /// [`Series`] from within an [`Event`].
-    series: &'a Series,
+    series: Series,
 }
 
-impl<'a> Display for Event<'a> {
+impl Display for Event {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}, {}", self.ticker, self.mutually_exclusive)
     }
 }
 
-impl<'a> Event<'a> {
-    pub fn new(ticker: &str, mutually_exclusive: bool, series: &'a Series) -> Self {
+impl Event {
+    pub fn new(ticker: &str, mutually_exclusive: bool, series: Series) -> Self {
         // possibly as a check to ensure event ticker inherits from series ticker?
         Event { 
             ticker: ticker.to_string(), 
